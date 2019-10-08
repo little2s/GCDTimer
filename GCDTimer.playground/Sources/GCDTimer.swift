@@ -32,7 +32,7 @@ public final class GCDTimer {
         self.invalidate()
     }
     
-    public func start() {
+    public func start(now: Bool = false) {
         let timer = DispatchSource.makeTimerSource(queue: self.queue)
         timer.setEventHandler(handler: { [weak self] in
             if let strongSelf = self {
@@ -48,10 +48,10 @@ public final class GCDTimer {
         self.lock.unlock()
         
         if self.`repeat` {
-            let time: DispatchTime = .now() + self.timeout
+            let time: DispatchTime = .now() + (now ? 0 : self.timeout)
             timer.schedule(deadline: time, repeating: self.timeout)
         } else {
-            let time: DispatchTime = .now() + self.timeout
+            let time: DispatchTime = .now() + (now ? 0 : self.timeout)
             timer.schedule(deadline: time)
         }
         
